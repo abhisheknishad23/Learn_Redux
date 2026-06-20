@@ -4,11 +4,16 @@ import { fetchPhotos, fetchVideos } from '../api/mediaApi'
 import { setQuery, setLoading, setError, setResults } from '../redux/features/searchSlice'
 
 const ResultGrid = () => {
+
+    const dispatch = useDispatch()
     const {query, activeTab, result, loading, error} = useSelector((store)=>store.search)
 
     useEffect (function(){
         const getData = async()=>{
-        let data
+
+        try{
+            dispatch(setLoading())
+            let data =[]
 
         if(activeTab == 'photos'){
             let response = await fetchPhotos(query)
@@ -30,15 +35,25 @@ const ResultGrid = () => {
                 src:item.video_files[0].link
             }))
         }
-        console.log(data);
+        useDispatch(setResults(data))
+
+        } catch (err){
+            dispatch(setError(err))
+
+        }
     }
     getData()
     }, [query,activeTab])
+
+    if(error) return <h1>Error</h1>
+    if(loading) return <h1>Loading...</h1>
     
 
   return (
     <div>
-        <button >GetData</button>
+        {result.map((item,idx)=>{
+            return item.title
+        })}
     </div>
   )
 }
