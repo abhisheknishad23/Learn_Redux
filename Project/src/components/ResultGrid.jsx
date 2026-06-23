@@ -37,22 +37,23 @@ const ResultGrid = () => {
                 src:item.video_files[0].link
             }))
         }
-        useDispatch(setResults(data))
+        dispatch(setResults(data));
 
         } catch (err){
-            dispatch(setError(err))
+            dispatch(setError(err.message));
 
         }
     }
     getData()
-    }, [query,activeTab])
+    }, [query,activeTab, dispatch])
 
-    if(error) return <h1>Error</h1>
-    if(loading) return <h1>Loading...</h1>
+    if (error) return <h1 className="text-white p-5">Error: {error}</h1>
+    if (loading) return <h1 className="text-white p-5">Loading...</h1>
+    if (!results || results.length === 0) return <h1 className="text-white p-5">No results found for "{query}"</h1>
     
 
   return (
-    <div className='flex flex-wrap gap-5 overflow-auto px-10'>
+    <div className='flex justify-between w-full flex-wrap gap-5 overflow-auto px-10'>
         {results.map((item,idx)=>{
             return <div key={idx}>
                 <ResultCard item={item}/>
